@@ -1,9 +1,9 @@
 const {DataTypes} = require('sequelize');
-const sequelize = require('./index');
+const sequelize = require('./database');
 
 const hart = sequelize.define('hart', {
   user_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING(50),
     primaryKey: true,
     allowNull: false,
   },

@@ -1,5 +1,5 @@
 const {DataTypes} = require('sequelize');
-const sequelize = require('./index');
+const sequelize = require('./database');
 
 const post = sequelize.define('post', {
   post_id: {
@@ -8,7 +8,7 @@ const post = sequelize.define('post', {
     primaryKey: true,
   },
   user_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING(50),
     allowNull: true,
   },
   title: {

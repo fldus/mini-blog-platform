@@ -1,15 +1,4 @@
-const {Sequelize} = require('sequelize');
-const dotenv = require('dotenv');
-dotenv.config();
-
-const sequelize = new Sequelize(
-  process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
-    host: process.env.DB_HOST,
-    dialect: 'mysql',
-    logging: false,
-  }
-);
-
+const sequelize = require('./database');
 const user = require('./user');
 const post = require('./post');
 const file = require('./file');
@@ -43,4 +32,4 @@ hart.belongsTo(post, {
   onDelete: 'CASCADE'
 })
 
-module.exports = sequelize;
+module.exports = {sequelize, user, post, file, hart};
