@@ -3,9 +3,13 @@ const path = require('path');
 const methodOverride = require('method-override');
 const session = require('express-session');
 const loginRoutes = require('./routes/login');
+const postRoutes = require('./routes/posts');
 
 const app = express();
 const port = 3000;
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.json());
 app.use(express.urlencoded({extended : true}));
@@ -16,17 +20,16 @@ app.use(session({
   saveUninitialized: false,
   cookie: {secure: false}
 }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/login', loginRoutes);
+app.use('/post', postRoutes);
 
 app.get('/', (req, res) => {
-  res.render('index')
+  res.render('blog')
 })
 app.use((req, res) => {
   res.status(404).send('404 not found');
 });
-
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
 
 app.listen(port, () => {
   console.log(`서버가 http://localhost:${port}에서 실행 중입니다.`);

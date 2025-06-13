@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Post Details</title>
+</head>
+<body>
+  <h1><%= post.title %></h1>
+  <p><strong>작성일:</strong> <%= new Date(post.posted_at).toLocaleString() %></p>
+
+  <% if (post.content) { %>
+    <p><%= post.content.replace(/\n/g, '<br>') %></p>
+  <% } else { %>
+    <p>내용이 없습니다.</p>
+  <% } %>
+
+  <% if (files && files.length > 0) { %>
+    <p><strong>첨부파일:</strong></p>
+    <ul>
+      <% files.forEach(file => { %>
+        <li>
+          <a href="/uploads/<%= path.basename(file.file_path) %>" download="<%= file.file_name %>">
+            <%= file.file_name %>
+          </a>
+        </li>
+      <% }); %>
+    </ul>
+  <% } %>
+  
+  <hr>
+  <a href="/">돌아가기</a>
+  <% if (user && user.user_id === post.user_id) { %>
+    <a href="/post/edit/<%= post.post_id %>">수정</a>
+    <a href="/post/delete/<%= post.post_id %>">삭제</a>
+  <% } %>
+</body>
+</html>

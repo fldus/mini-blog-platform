@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>글 수정하기</title>
+</head>
+<body>
+  <h1>글 수정하기</h1>
+
+  <form action="/post/edit/<%= post.post_id %>" method="post" enctype="multipart/form-data">
+    <label for="title">제목 : </label>
+    <input type="text" id="title" name="title" value="<%= post.title %>" required><br>
+    <label for="content">내용:</label><br>
+    <textarea id="content" name="content" rows="10" cols="50"><%= post.content %></textarea><br>
+    <p>첨부파일</p>
+    <ul>
+      <% file.forEach(f => { %>
+        <li>
+          <a href="/<%= f.file_path %>" download><%= f.file_name %></a>
+          <button type="button" onclick="removeFile('<%= f.file_id %>')">X</button>
+        </li>
+      <% }); %>
+    </ul>
+    <label for="file">파일추가:</label>
+    <input type="file" id="file" name="file" multiple><br>
+  <button type="submit">submit</button>
+  </form>
+
+  <script>
+    function removeFile(fileId) {
+      if (confirm("정말 삭제하시겠습니까?")) {
+        fetch(`/post/file/${fileId}`, { method: 'DELETE' })
+          .then(res => {
+            if (res.ok) location.reload();
+            else alert("삭제 실패");
+          });
+      }
+    }
+  </script>
+</body>
+</html>

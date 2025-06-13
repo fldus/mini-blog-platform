@@ -2,7 +2,6 @@ const user = require('../models/user');
 const bcrypt = require('bcrypt');
 
 const loginController = {
-  // 로그인 폼
   getLoginForm: (req, res) => {
     res.render('login');
   },
@@ -12,12 +11,22 @@ const loginController = {
     try{
       const login = await user.findOne({where : {user_id}});
       if(!login){
-        return res.status(401).send('존재하지 않는 사용자입니다.');
+        return res.status(401).send(
+          `<script>
+            alert("존재하지 않는 사용자입니다.");
+            window.location.href = "/login";
+          </script>`
+        );
       }
 
       const match = await bcrypt.compare(password, login.password);
       if(!match){
-        return res.status(401).send('비밀번호가 일치하지 않습니다.');
+        return res.status(401).send(
+          `<script>
+            alert("비밀번호가 일치하지 않습니다.");
+            window.location.href = "/login";
+          </script>`
+        );
       }
 
       req.session.user = {
@@ -41,11 +50,28 @@ const loginController = {
     try{
       const userid = await user.findOne({where : {user_id}});
       if(userid){
-        return res.status(400).send('이미 존재하는 아이디입니다.');
+        return res.status(400).send(
+          `<script>
+            alert("이미 존재하는 아이디입니다.");
+            window.location.href = "/login/join";
+          </script>`);
       }
 
       if(password != passwordch){
-        return res.status(400).send('비밀번호가 일치하지 않습니다.');
+        return res.status(400).send(
+          `<script>
+            alert("비밀번호가 일치하지 않습니다.");
+            window.location.href = "/login/join";
+          </script>`);
+      }
+
+      const useremail = await user.findOne({where : {email}});
+      if(useremail){
+        return res.status(400).send(
+          `<script>
+            alert("이미 가입된 이메일입니다.");
+            window.location.href = "/login";
+          </script>`);
       }
       
       const hashPassword = await bcrypt.hash(password, 10);
