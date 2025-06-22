@@ -4,6 +4,7 @@ const methodOverride = require('method-override');
 const session = require('express-session');
 const loginRoutes = require('./routes/login');
 const postRoutes = require('./routes/posts');
+const postController = require('./controllers/postController');
 
 const app = express();
 const port = 3000;
@@ -24,9 +25,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/login', loginRoutes);
 app.use('/post', postRoutes);
 
-app.get('/', (req, res) => {
-  res.render('blog')
-})
+app.get('/', postController.showAll);
 app.use((req, res) => {
   res.status(404).send('404 not found');
 });

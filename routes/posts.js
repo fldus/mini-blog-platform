@@ -19,13 +19,14 @@ const upload = multer({storage});
 // 글 쓰기
 router.post('/', upload.array('file', 10), postController.postInput);
 router.get('/postForm', postController.getPostForm);
-// 상세보기
-router.get('/:id', postController.showPost);
 // 수정
 router.get('/edit/:id', postController.getEditForm);
 router.post('/edit/:id', upload.array('file'), postController.editPost);
 // 삭제
 router.delete('/file/:id', postController.deleteFile);
 router.get('/delete/:id', postController.deletePost);
+// 상세보기
+router.get('/list', postController.showAll);
+router.get('/:id', postController.showPost);
 
 module.exports = router;

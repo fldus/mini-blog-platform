@@ -1,6 +1,4 @@
-const userModel = require('../models/user');
-const postModel = require('../models/post');
-const fileModel = require('../models/file');
+const {user: userModel, post: postModel, file: fileModel} = require('../models');
 const fs = require('fs');
 
 const postController = {
@@ -51,6 +49,23 @@ const postController = {
     }catch(err){
       console.error('글 작성 실패', err);
       res.status(500).send('글 작성 실패');
+    }
+  },
+  // 글 목록 조회
+  showAll: async (req, res) => {
+    try{
+      const post = await postModel.findAll({
+        include: [{model: userModel, attributes: ['username']}],
+        order: [['posted_at', 'DESC']]
+      });
+      
+      res.render('blog', {
+        posts: post.map(post => post.toJSON()),
+        user: req.session.user
+      });
+    }catch(err){
+      console.error('글 목록 조회 실패', err);
+      res.status(500).send('글 목록 조회 실패');
     }
   },
   // 글 상세 보기
