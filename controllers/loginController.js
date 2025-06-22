@@ -1,5 +1,6 @@
 const user = require('../models/user');
 const bcrypt = require('bcrypt');
+const postController = require('../controllers/postController');
 
 const loginController = {
   getLoginForm: (req, res) => {
@@ -41,6 +42,16 @@ const loginController = {
       res.status(500).send('로그인 실패')
     }
   },
+  logout: (req, res) => {
+    req.session.destroy(err => {
+      if (err) {
+        console.error('세션 삭제 중 오류', err);
+        return res.status(500).send('로그아웃 실패');
+      }
+      res.redirect('/');
+    });
+  },
+  
   getJoinForm: (req, res) => {
     res.render('join');
   },

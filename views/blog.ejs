@@ -23,11 +23,11 @@
         <span><%= user.username %>님</span>
         <a href="/post/postForm" class="button">글 작성</a>
         <a href="/mypage" class="button">마이페이지</a>
-        <a href="/logout" class="button">로그아웃</a>
+        <a href="/login/logout" class="button">로그아웃</a>
       <% } else { %>
         <a href="/login" class="button">로그인</a>
       <% } %>
-    </div>
+      </div>
   </header>
 
   <% if (posts.length === 0) { %>
@@ -44,7 +44,23 @@
         <div class="post-footer">
           <span>작성자: <%= post.user ? post.user.username : '알 수 없음' %></span>
           <div class="post-actions">
-            ❤️
+            <% if (user) { %>
+              <button 
+                class="hart-btn" 
+                data-post-id="<%= post.post_id %>"
+                style="border:none; background:none; cursor:pointer; font-size: 1.2em;"
+              >
+                <span class="hart-icon"><%= post.liked ? '❤️' : '🤍' %></span>
+              </button>
+            <% } else { %>
+              <span 
+                class="hart-guest" 
+                style="font-size: 1.2em; cursor: pointer;"
+                data-post-id="<%= post.post_id %>"
+              >🤍</span>
+            <% } %>
+            <span class="hart-count"><%= post.count %></span>
+            
             <% if (user && user.user_id === post.user_id) { %>
               <a href="/post/edit/<%= post.post_id %>">수정</a>
               <a href="/post/delete/<%= post.post_id %>">삭제</a>
@@ -54,5 +70,48 @@
       </div>
     <% }) %>
   <% } %>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // 로그인 사용자용 하트 버튼 이벤트
+      document.querySelectorAll(".hart-btn").forEach(button => {
+        button.addEventListener("click", async () => {
+          const postId = button.dataset.postId;
+  
+          try {
+            const res = await fetch(`/hart/${postId}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              }
+            });
+            const data = await res.json();
+  
+            if (res.ok) {
+              const icon = button.querySelector('.hart-icon');
+              const countSpan = button.nextElementSibling;
+  
+              const current = icon.textContent;
+              icon.textContent = current === '❤️' ? '🤍' : '❤️';
+              countSpan.textContent = data.count;
+            } else {
+              alert("하트 처리 실패: " + (data.message || ''));
+            }
+          } catch (err) {
+            console.error("하트 토글 실패", err);
+          }
+        });
+      });
+  
+      // 로그아웃 상태 사용자용 빈 하트 클릭 시 알림 이벤트 추가
+      document.querySelectorAll(".hart-guest").forEach(span => {
+        span.addEventListener("click", () => {
+          alert("로그인이 필요합니다.");
+          window.location.href = "/login";
+        });
+      });
+    });
+  </script>
+  
 </body>
 </html>

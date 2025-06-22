@@ -1,4 +1,4 @@
-const {user: userModel, post: postModel, file: fileModel} = require('../models');
+const {user: userModel, post: postModel, file: fileModel, hart:hartModel} = require('../models');
 const fs = require('fs');
 
 const postController = {
@@ -58,9 +58,31 @@ const postController = {
         include: [{model: userModel, attributes: ['username']}],
         order: [['posted_at', 'DESC']]
       });
-      
+
+      const posts = await Promise.all(post.map(async (post) =>{
+        const plain  = post.toJSON();
+        const count = await hartModel.count({ where: {post_id: post.post_id}});
+
+        let liked = false;
+        if(req.session.user){
+          const hart = await hartModel.findOne({
+            where: {
+              post_id: post.post_id,
+              user_id: req.session.user.user_id
+            }
+          });
+          liked = !!hart;
+        }
+
+        return {
+          ...plain,
+          count,
+          liked
+        };
+      }));
+
       res.render('blog', {
-        posts: post.map(post => post.toJSON()),
+        posts: posts,
         user: req.session.user
       });
     }catch(err){
