@@ -6,6 +6,7 @@ const loginRoutes = require('./routes/login');
 const postRoutes = require('./routes/posts');
 const postController = require('./controllers/postController');
 const hartRoutes = require('./routes/hart');
+const mypageRoutes = require('./routes/mypage');
 
 const app = express();
 const port = 3000;
@@ -26,6 +27,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/login', loginRoutes);
 app.use('/post', postRoutes);
 app.use('/hart', hartRoutes);
+app.use('/mypage', mypageRoutes);
 
 app.get('/', postController.showAll);
 app.use((req, res) => {

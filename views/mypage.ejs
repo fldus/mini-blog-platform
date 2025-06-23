@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>마이페이지</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    header { display: flex; justify-content: space-between; align-items: center; }
+    .post { border: 1px solid #ddd; padding: 15px; margin-top: 15px; border-radius: 8px; }
+    .post-title { font-size: 1.2em; font-weight: bold; margin-bottom: 5px; }
+    .post-content { color: #555; margin-bottom: 10px; }
+    .post-footer { font-size: 0.9em; color: #888; display: flex; justify-content: space-between; }
+    .post-actions a { margin-left: 10px; text-decoration: none; color: #007BFF; }
+    .top-right { display: flex; align-items: center; gap: 10px; }
+    a.button { background-color: #007BFF; color: white; padding: 8px 12px; border-radius: 5px; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <h1>마이페이지</h1>
+
+  <h2>내 정보</h2>
+  <form action="/mypage/edit" method="post">
+    <p>아이디: <%= user.user_id %></p>
+    <p>이메일: <%= user.email %></p>
+    <p>
+      닉네임: 
+      <input type="text" name="username" value="<%= user.username %>" required />
+      <button type="submit">수정</button>
+    </p>
+  </form>
+  <a href="/">홈으로</a><hr>
+  <h2>내가 작성한 글 목록</h2>
+  <ul>
+    <% if (posts.length === 0) { %>
+      <li>작성한 글이 없습니다.</li>
+    <% } else { %>
+      <% posts.forEach(post => { %>
+        <div class="post">
+          <div class="post-title">
+            <a href="/post/<%= post.post_id %>"><%= post.title %></a>
+          </div>
+          <div class="post-content">
+            <%= post.content.length > 100 ? post.content.substring(0, 100) + '...' : post.content %>
+          </div>
+          <div class="post-footer">
+            <div class="post-actions">
+              <% if (user) { %>
+                <button 
+                  class="hart-btn" 
+                  data-post-id="<%= post.post_id %>"
+                  style="border:none; background:none; cursor:pointer; font-size: 1.2em;"
+                >
+                  <span class="hart-icon"><%= post.liked ? '❤️' : '🤍' %></span>
+                </button>
+              <% } else { %>
+                <span 
+                  class="hart-guest" 
+                  style="font-size: 1.2em; cursor: pointer;"
+                  data-post-id="<%= post.post_id %>"
+                >🤍</span>
+              <% } %>
+              <span class="hart-count"><%= post.count %></span>
+              
+              <% if (user && user.user_id === post.user_id) { %>
+                <a href="/post/edit/<%= post.post_id %>">수정</a>
+                <a href="/post/delete/<%= post.post_id %>">삭제</a>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    <% } %>
+  </ul>
+</body>
+</html>
